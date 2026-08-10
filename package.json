@@ -4,10 +4,12 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "dev:calc": "ts-node src/mortgage-calculator.ts"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@types/node": "^26.2.0",
+    "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   },
   "private": true
