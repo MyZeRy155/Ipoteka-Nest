@@ -35,6 +35,6 @@ export class MortgageService {
         const monthlyPayment: number = this.calcMonthlyPayment(dto.interestRate, dto.mortgageAmount, dto.mortgageTermMonths);
         const totalDebt: number = this.calcTotalDebt(monthlyPayment, dto.mortgageTermMonths);
         const overPayment: number = this.calcOverPayment(totalDebt, dto.mortgageAmount)
-        return { monthlyPayment, totalDebt, overpayment: overPayment };
+        return new MortgageResultDto(monthlyPayment, totalDebt, overPayment);
     }
 }
