@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {CalculateMortgageDto} from "./dto/calculate-mortgage.dto";
-import {MortgageResultDto} from "./dto/mortgage-result.dto";
+import {MortgageRecordResultDto} from "./dto/mortgage-result.dto";
 
 @Injectable()
 export class MortgageService {
@@ -31,10 +31,10 @@ export class MortgageService {
         return monthlyPayment;
     }
 
-    public calculateMortgage(dto: CalculateMortgageDto): MortgageResultDto {
+    public calculateMortgage(dto: CalculateMortgageDto): MortgageRecordResultDto {
         const monthlyPayment: number = this.calcMonthlyPayment(dto.interestRate, dto.mortgageAmount, dto.mortgageTermMonths);
         const totalDebt: number = this.calcTotalDebt(monthlyPayment, dto.mortgageTermMonths);
         const overPayment: number = this.calcOverPayment(totalDebt, dto.mortgageAmount)
-        return new MortgageResultDto(monthlyPayment, totalDebt, overPayment);
+        return new MortgageRecordResultDto(dto.interestRate, dto.mortgageAmount, dto.mortgageTermMonths, monthlyPayment, totalDebt, overPayment);
     }
 }

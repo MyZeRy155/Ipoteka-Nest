@@ -1,8 +1,12 @@
-export class MortgageResultDto {
+export class MortgageRecordResultDto {
     constructor(
+        public interestRate: number,
+        public mortgageAmount: number,
+        public mortgageTermMonths: number,
         public monthlyPayment: number,
         public totalDebt: number,
-        public overpayment: number,
+        public overPayment: number,
+        public id?: number,
     ) {}
 
 }
