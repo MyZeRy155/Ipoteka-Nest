@@ -22,7 +22,7 @@ export class MortgageController {
             { return this.mortgageService.getOneCalcRecord(id); }
 
     @Delete('calculations/:id')
-        async deleteOneCalcRecord(@Param('id') id: string): Promise<MortgageRecordResultDto>
+        async deleteOneCalcRecord(@Param('id') id: string): Promise<void>
             { return this.mortgageService.deleteOneCalcRecord(id); }
 
 }

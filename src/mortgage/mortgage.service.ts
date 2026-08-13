@@ -90,19 +90,9 @@ export class MortgageService {
             record.id,
         );
     }
-    public async deleteOneCalcRecord(id: string): Promise<MortgageRecordResultDto> {
+    public async deleteOneCalcRecord(id: string): Promise<void> {
         const record = await this.calculationRepository.findOneBy({id: Number(id)});
         if (!record) {throw new NotFoundException(`Calculation with id ${id} not found`)}
-
         await this.calculationRepository.delete({id: Number(id)});
-        return new MortgageRecordResultDto(
-            record.interestRate,
-            record.mortgageAmount,
-            record.mortgageTermMonths,
-            record.monthlyPayment,
-            record.totalDebt,
-            record.overPayment,
-            record.id,
-        );
     }
 }
