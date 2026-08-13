@@ -1,4 +1,16 @@
 services:
+  app:
+    build: .
+    container_name: IpotekaApp
+    env_file:
+      - ".env"
+    environment:
+      DB_HOST: postgres
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
   postgres:
     image: postgres:16
     container_name: IpotekaPostgress
@@ -8,8 +20,8 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
-    volumes:
-      - postgres:/var/lib/postgresql/data
-volumes:
-  postgres:
-
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
