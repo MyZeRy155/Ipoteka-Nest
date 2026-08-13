@@ -1,6 +1,6 @@
 import {Injectable, NotFoundException} from '@nestjs/common';
 import {CalculateMortgageDto} from "./dto/calculate-mortgage.dto";
-import {MortgageRecordResultDto} from "./dto/mortgage-result.dto";
+import MortgageRecordResultDto from "./dto/mortgage-result.dto";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Calculation} from "./entities/calculation";
 import {Repository} from "typeorm";
