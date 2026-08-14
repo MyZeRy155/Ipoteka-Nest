@@ -3,7 +3,8 @@ import {CalculateMortgageDto} from "./dto/calculate-mortgage.dto";
 import MortgageRecordResultDto from "./dto/mortgage-result.dto";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Calculation} from "./entities/calculation";
-import {Repository} from "typeorm";
+import {Between, Repository} from "typeorm";
+import {GetCalculationsQueryDto} from "./dto/get-calculations-query.dto";
 
 @Injectable()
 export class MortgageService {
@@ -61,8 +62,10 @@ export class MortgageService {
         );
     }
 
-    public async getAllCalcRecords(): Promise<MortgageRecordResultDto[]> {
-        const records = await this.calculationRepository.find();
+    public async getAllCalcRecords(query: GetCalculationsQueryDto): Promise<MortgageRecordResultDto[]> {
+        const skip = (query.page - 1) * query.limit
+        const take = query.limit
+        const records = await this.calculationRepository.find({skip, take, where: { interestRate: Between(query.minInterestRate, query.maxInterestRate) }});
 
         return records.map((calculation: Calculation) => new MortgageRecordResultDto(
             calculation.interestRate,
@@ -75,8 +78,8 @@ export class MortgageService {
         ));
     }
 
-    public async getOneCalcRecord(id: string): Promise<MortgageRecordResultDto> {
-        const record = await this.calculationRepository.findOneBy({id: Number(id)});
+    public async getOneCalcRecord(id: number): Promise<MortgageRecordResultDto> {
+        const record = await this.calculationRepository.findOneBy({id: id});
         if (!record) {
             throw new NotFoundException(`Calculation with id ${id} not found`)
         }
@@ -90,9 +93,9 @@ export class MortgageService {
             record.id,
         );
     }
-    public async deleteOneCalcRecord(id: string): Promise<void> {
-        const record = await this.calculationRepository.findOneBy({id: Number(id)});
+    public async deleteOneCalcRecord(id: number): Promise<void> {
+        const record = await this.calculationRepository.findOneBy({id: id});
         if (!record) {throw new NotFoundException(`Calculation with id ${id} not found`)}
-        await this.calculationRepository.delete({id: Number(id)});
+        await this.calculationRepository.delete({id: id});
     }
 }
