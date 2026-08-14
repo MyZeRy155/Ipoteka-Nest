@@ -1,0 +1,1373 @@
+{
+	"info": {
+		"_postman_id": "122a1824-2d58-42ff-8de4-1742487fbebc",
+		"name": "IpotekaNest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "57375378"
+	},
+	"item": [
+		{
+			"name": "/",
+			"item": [
+				{
+					"name": "App Controller get Hello",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "calculate",
+			"item": [
+				{
+					"name": "Рассчитать параметры ипотеки и сохранить результат",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"interestRate\": 12,\n    \"mortgageAmount\": 10000,\n    \"mortgageTermMonths\": 12\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/calculate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"calculate"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "POST-01: Успешный расчёт",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"interestRate\": 12,\n    \"mortgageAmount\": 10000,\n    \"mortgageTermMonths\": 12\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/calculate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculate"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "171"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"ab-VBdrg9qk2OwdrfA541K5TR5975A\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 13:24:48 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"interestRate\": 12,\n    \"mortgageAmount\": 10000,\n    \"mortgageTermMonths\": 12,\n    \"monthlyPayment\": 888.4878867834168,\n    \"totalDebt\": 10661.854641401002,\n    \"overPayment\": 661.8546414010016,\n    \"id\": 2\n}"
+						},
+						{
+							"name": "POST-02: Пропущено обязательное поле",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"interestRate\": 12,\n    \"mortgageAmount\": 10000,\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/calculate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculate"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "130"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"82-1KmGqcRY/XRGzQWkT3SJrlkP0dw\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 13:27:54 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Expected double-quoted property name in JSON at position 55 (line 4 column 1)\",\n    \"error\": \"Bad Request\",\n    \"statusCode\": 400\n}"
+						},
+						{
+							"name": "POST-03: Некорректный тип поля",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"interestRate\": 12, \"mortgageAmount\": 10000, \"mortgageTermMonths\": \"abc\"}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/calculate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculate"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "272"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"110-esRPQyQwlZS1ZPjaNBKWkoQHFew\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 13:37:12 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": [\n        \"mortgageTermMonths must not be greater than 360\",\n        \"mortgageTermMonths must not be less than 1\",\n        \"mortgageTermMonths must be an integer number\",\n        \"mortgageTermMonths must be a number conforming to the specified constraints\"\n    ],\n    \"error\": \"Bad Request\",\n    \"statusCode\": 400\n}"
+						},
+						{
+							"name": "POST-04: Значение ниже допустимого минимума",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"interestRate\": 0, \"mortgageAmount\": 10000, \"mortgageTermMonths\": 12}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/calculate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculate"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "134"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"86-WGqczjnPo2R2yUjFfPW0PC/qhaE\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 13:39:07 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": [\n        \"interestRate must not be less than 0.1\",\n        \"interestRate must be a positive number\"\n    ],\n    \"error\": \"Bad Request\",\n    \"statusCode\": 400\n}"
+						},
+						{
+							"name": "POST-05: Значение выше допустимого максимума",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"interestRate\": 12, \"mortgageAmount\": 10000, \"mortgageTermMonths\": 500}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/calculate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculate"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "102"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"66-7Ef2+REyOHY3a0g08A2hyzldMWo\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 13:41:37 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": [\n        \"mortgageTermMonths must not be greater than 360\"\n    ],\n    \"error\": \"Bad Request\",\n    \"statusCode\": 400\n}"
+						},
+						{
+							"name": "POST-06: Лишнее поле в теле запроса. В ответе отсутствует",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"interestRate\": 12, \"mortgageAmount\": 10000, \"mortgageTermMonths\": 12, \"comment\": \"test\"}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/calculate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculate"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "171"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"ab-5bZTRA57jLhSUTbSaiTa2YSyEUs\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 14 Aug 2026 13:42:42 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"interestRate\": 12,\n    \"mortgageAmount\": 10000,\n    \"mortgageTermMonths\": 12,\n    \"monthlyPayment\": 888.4878867834168,\n    \"totalDebt\": 10661.854641401002,\n    \"overPayment\": 661.8546414010016,\n    \"id\": 3\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "calculations",
+			"item": [
+				{
+					"name": "{id}",
+					"item": [
+						{
+							"name": "Получить один расчёт по идентификатору",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations",
+										"1"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "GET-ID-01: Существующий id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/calculations/1",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"calculations",
+												"1"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "216"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"interestRate\": 15,\n    \"mortgageAmount\": 100000,\n    \"mortgageTermMonths\": 24,\n    \"monthlyPayment\": 4848.664804695115,\n    \"totalDebt\": 116367.95531268275,\n    \"overPayment\": 16367.955312682752,\n    \"id\": 1\n}"
+								},
+								{
+									"name": "GET-ID-02: Несуществующий, но валидный id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/calculations/9999",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"calculations",
+												"9999"
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "104"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Calculation with id 9999 not found\",\n    \"error\": \"Not Found\",\n    \"statusCode\": 404\n}"
+								},
+								{
+									"name": "GET-ID-03: Нечисловой id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/calculations/abc",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"calculations",
+												"abc"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "118"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Validation failed (numeric string is expected)\",\n    \"error\": \"Bad Request\",\n    \"statusCode\": 400\n}"
+								},
+								{
+									"name": "GET-ID-04: Отрицательный id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/calculations/-5",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"calculations",
+												"-5"
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "102"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Calculation with id -5 not found\",\n    \"error\": \"Not Found\",\n    \"statusCode\": 404\n}"
+								}
+							]
+						},
+						{
+							"name": "Удалить расчёт по идентификатору",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations",
+										"1"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "DELETE-01: Удаление существующей записи",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/calculations/5",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"calculations",
+												"5"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "0"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "DELETE-02: Повторное удаление того же id",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/calculations/5",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"calculations",
+												"5"
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "101"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Calculation with id 5 not found\",\n    \"error\": \"Not Found\",\n    \"statusCode\": 404\n}"
+								},
+								{
+									"name": "DELETE-03: Нечисловой id",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/calculations/abc",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"calculations",
+												"abc"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "118"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Validation failed (numeric string is expected)\",\n    \"error\": \"Bad Request\",\n    \"statusCode\": 400\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Получить список всех сохранённых расчётов",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/calculations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"calculations"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "GET-01: Список без параметров",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "760"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"interestRate\": 15,\n        \"mortgageAmount\": 100000,\n        \"mortgageTermMonths\": 24,\n        \"monthlyPayment\": 4848.664804695115,\n        \"totalDebt\": 116367.95531268275,\n        \"overPayment\": 16367.955312682752,\n        \"id\": 1\n    },\n    {\n        \"interestRate\": 12,\n        \"mortgageAmount\": 10000,\n        \"mortgageTermMonths\": 12,\n        \"monthlyPayment\": 888.4878867834168,\n        \"totalDebt\": 10661.854641401002,\n        \"overPayment\": 661.8546414010016,\n        \"id\": 2\n    },\n    {\n        \"interestRate\": 12,\n        \"mortgageAmount\": 10000,\n        \"mortgageTermMonths\": 12,\n        \"monthlyPayment\": 888.4878867834168,\n        \"totalDebt\": 10661.854641401002,\n        \"overPayment\": 661.8546414010016,\n        \"id\": 3\n    }\n]"
+						},
+						{
+							"name": "GET-02: Ограничение размера страницы",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations?limit=2",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "508"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"interestRate\": 15,\n        \"mortgageAmount\": 100000,\n        \"mortgageTermMonths\": 24,\n        \"monthlyPayment\": 4848.664804695115,\n        \"totalDebt\": 116367.95531268275,\n        \"overPayment\": 16367.955312682752,\n        \"id\": 1\n    },\n    {\n        \"interestRate\": 12,\n        \"mortgageAmount\": 10000,\n        \"mortgageTermMonths\": 12,\n        \"monthlyPayment\": 888.4878867834168,\n        \"totalDebt\": 10661.854641401002,\n        \"overPayment\": 661.8546414010016,\n        \"id\": 2\n    }\n]"
+						},
+						{
+							"name": "GET-03: Смещение на вторую страницу",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations?page=2&limit=2",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "2"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "254"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"interestRate\": 12,\n        \"mortgageAmount\": 10000,\n        \"mortgageTermMonths\": 12,\n        \"monthlyPayment\": 888.4878867834168,\n        \"totalDebt\": 10661.854641401002,\n        \"overPayment\": 661.8546414010016,\n        \"id\": 3\n    }\n]"
+						},
+						{
+							"name": "GET-04: Страница за пределами данных",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations?page=99&limit=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "99"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[]"
+						},
+						{
+							"name": "GET-05: limit выше допустимого максимума",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations?limit=50",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "50"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "121"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": [\n        \"limit must not be greater than 10\"\n    ],\n    \"error\": \"Bad Request\",\n    \"statusCode\": 400\n}"
+						},
+						{
+							"name": "GET-06: Фильтр только по нижней границе ставки",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations?minInterestRate=14",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations"
+									],
+									"query": [
+										{
+											"key": "minInterestRate",
+											"value": "14"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "256"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"interestRate\": 15,\n        \"mortgageAmount\": 100000,\n        \"mortgageTermMonths\": 24,\n        \"monthlyPayment\": 4848.664804695115,\n        \"totalDebt\": 116367.95531268275,\n        \"overPayment\": 16367.955312682752,\n        \"id\": 1\n    }\n]"
+						},
+						{
+							"name": "GET-07: Фильтр только по верхней границе ставки",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations?maxInterestRate=13",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations"
+									],
+									"query": [
+										{
+											"key": "maxInterestRate",
+											"value": "13"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "506"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"interestRate\": 12,\n        \"mortgageAmount\": 10000,\n        \"mortgageTermMonths\": 12,\n        \"monthlyPayment\": 888.4878867834168,\n        \"totalDebt\": 10661.854641401002,\n        \"overPayment\": 661.8546414010016,\n        \"id\": 2\n    },\n    {\n        \"interestRate\": 12,\n        \"mortgageAmount\": 10000,\n        \"mortgageTermMonths\": 12,\n        \"monthlyPayment\": 888.4878867834168,\n        \"totalDebt\": 10661.854641401002,\n        \"overPayment\": 661.8546414010016,\n        \"id\": 3\n    }\n]"
+						},
+						{
+							"name": "GET-08: Нелогичный диапазон (min > max)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations?minInterestRate=40&maxInterestRate=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations"
+									],
+									"query": [
+										{
+											"key": "minInterestRate",
+											"value": "40"
+										},
+										{
+											"key": "maxInterestRate",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[]"
+						},
+						{
+							"name": "GET-09: Фильтр и пагинация одновременно",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations?minInterestRate=10&limit=1&page=1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations"
+									],
+									"query": [
+										{
+											"key": "minInterestRate",
+											"value": "10"
+										},
+										{
+											"key": "limit",
+											"value": "1"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "256"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"interestRate\": 15,\n        \"mortgageAmount\": 100000,\n        \"mortgageTermMonths\": 24,\n        \"monthlyPayment\": 4848.664804695115,\n        \"totalDebt\": 116367.95531268275,\n        \"overPayment\": 16367.955312682752,\n        \"id\": 1\n    }\n]"
+						},
+						{
+							"name": "GET-10: Неизвестный query-параметр",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/calculations?foo=bar",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"calculations"
+									],
+									"query": [
+										{
+											"key": "foo",
+											"value": "bar"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "760"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"interestRate\": 15,\n        \"mortgageAmount\": 100000,\n        \"mortgageTermMonths\": 24,\n        \"monthlyPayment\": 4848.664804695115,\n        \"totalDebt\": 116367.95531268275,\n        \"overPayment\": 16367.955312682752,\n        \"id\": 1\n    },\n    {\n        \"interestRate\": 12,\n        \"mortgageAmount\": 10000,\n        \"mortgageTermMonths\": 12,\n        \"monthlyPayment\": 888.4878867834168,\n        \"totalDebt\": 10661.854641401002,\n        \"overPayment\": 661.8546414010016,\n        \"id\": 2\n    },\n    {\n        \"interestRate\": 12,\n        \"mortgageAmount\": 10000,\n        \"mortgageTermMonths\": 12,\n        \"monthlyPayment\": 888.4878867834168,\n        \"totalDebt\": 10661.854641401002,\n        \"overPayment\": 661.8546414010016,\n        \"id\": 3\n    }\n]"
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000"
+		}
+	]
+}
