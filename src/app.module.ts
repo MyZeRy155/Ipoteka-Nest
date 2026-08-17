@@ -5,6 +5,9 @@ import { MortgageModule } from './mortgage/mortgage.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {Calculation} from "./mortgage/entities/calculation";
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { CurrencyModule } from './currency/currency.module';
 
 @Module({
   imports: [
@@ -21,7 +24,10 @@ import {Calculation} from "./mortgage/entities/calculation";
           database: configService.get('DB_NAME'),
             entities: [Calculation]
         })
-      })
+      }),
+      AuthModule,
+      UsersModule,
+      CurrencyModule
   ],
   controllers: [AppController],
   providers: [AppService],
