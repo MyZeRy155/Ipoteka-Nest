@@ -66,7 +66,7 @@ describe('Auth + Currency (e2e)', () => {
     const token = loginResponse.body.access_token;
 
     (httpService.get as jest.Mock).mockReturnValue(
-      of({ data: { conversion_rates: { USD: 1 } } }),
+      of({ data: { base_code: 'USD', conversion_rates: { USD: 1 } } }),
     );
 
     const response = await request(app.getHttpServer())
