@@ -127,7 +127,7 @@ curl -i http://localhost:3000/currency/currencies/USD \
 npm run test
 ```
 
-Покрыты: `AuthGuard` (валидный/невалидный токен, отсутствие заголовка, неверная схема авторизации), `CurrencyService` (кэш-хит, happy path с кэшированием, retry с backoff, исчерпание попыток → `503`, невалидный ответ источника → `503` без засорения кэша), плюс DI-сборка остальных модулей. Внешние зависимости (`HttpService`, `ConfigService`, `CACHE_MANAGER`, `JwtService`, TypeORM-репозиторий) замоканы — реальные Postgres/Redis/внешний API не требуются.
+Покрыты: `AuthGuard` (валидный/невалидный токен, отсутствие заголовка, неверная схема авторизации), `CurrencyService` (кэш-хит, happy path с кэшированием, отказ primary без резервного источника → `503`, невалидный ответ источника → `503` без засорения кэша, fallback на `ParseService`/парсер ЦБ РФ для `RUB` при отказе primary, единая `503` при отказе и primary, и fallback), `ResilientHttpService` (retry с экспоненциальным backoff и jitter, исчерпание всех попыток), плюс DI-сборка остальных модулей. Внешние зависимости (`ResilientHttpService`, `ParseService`, `ConfigService`, `CACHE_MANAGER`, `HttpService`, `JwtService`, TypeORM-репозиторий) замоканы — реальные Postgres/Redis/внешний API не требуются.
 
 ### e2e (Supertest)
 

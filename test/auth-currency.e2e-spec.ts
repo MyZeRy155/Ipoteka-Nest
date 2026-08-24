@@ -74,7 +74,11 @@ describe('Auth + Currency (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 
-    expect(response.body).toEqual({ conversion_rates: { USD: 1 } });
+    expect(response.body).toMatchObject({
+      baseCurrency: 'USD',
+      rates: { USD: 1 },
+      source: 'Exchange_API',
+    });
   });
 
   it('GET /currency/currencies/:currency — при недоступности источника возвращает 503 в едином формате', async () => {
