@@ -8,9 +8,17 @@ import { Calculation } from './mortgage/entities/calculation';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { CurrencyModule } from './currency/currency.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 20,
+      },
+    ]),
     MortgageModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
@@ -30,6 +38,12 @@ import { CurrencyModule } from './currency/currency.module';
     CurrencyModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

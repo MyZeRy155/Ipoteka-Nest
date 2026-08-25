@@ -6,6 +6,8 @@ import { ConfigService } from '@nestjs/config';
 import KeyvRedis from '@keyv/redis';
 import { ParseService } from '../parser/parse-currency-rate.cbrf';
 import { ResilientHttpModule } from '../common/resilient-http/resilient-http.module';
+import { CurrencyHealthService } from './currency-health.service';
+import { RubSourceCompareService } from './rub-source-compare.service';
 
 @Module({
   imports: [
@@ -21,7 +23,12 @@ import { ResilientHttpModule } from '../common/resilient-http/resilient-http.mod
     }),
     ResilientHttpModule,
   ],
-  providers: [CurrencyService, ParseService],
+  providers: [
+    CurrencyService,
+    ParseService,
+    CurrencyHealthService,
+    RubSourceCompareService,
+  ],
   controllers: [CurrencyController],
 })
 export class CurrencyModule {}

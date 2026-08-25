@@ -66,7 +66,7 @@ describe('Auth + Currency (e2e)', () => {
     const token = loginResponse.body.access_token;
 
     (httpService.get as jest.Mock).mockReturnValue(
-      of({ data: { conversion_rates: { USD: 1 } } }),
+      of({ data: { base_code: 'USD', conversion_rates: { USD: 1 } } }),
     );
 
     const response = await request(app.getHttpServer())
@@ -74,7 +74,11 @@ describe('Auth + Currency (e2e)', () => {
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
 
-    expect(response.body).toEqual({ conversion_rates: { USD: 1 } });
+    expect(response.body).toMatchObject({
+      baseCurrency: 'USD',
+      rates: { USD: 1 },
+      source: 'Exchange_API',
+    });
   });
 
   it('GET /currency/currencies/:currency — при недоступности источника возвращает 503 в едином формате', async () => {

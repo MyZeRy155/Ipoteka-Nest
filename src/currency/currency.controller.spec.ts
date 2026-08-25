@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CurrencyController } from './currency.controller';
 import { CurrencyService } from './currency.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { CurrencyHealthService } from './currency-health.service';
+import { RubSourceCompareService } from './rub-source-compare.service';
 
 describe('CurrencyController', () => {
   let controller: CurrencyController;
@@ -11,8 +13,16 @@ describe('CurrencyController', () => {
       controllers: [CurrencyController],
       providers: [
         {
+          provide: CurrencyHealthService,
+          useValue: { checkHealth: jest.fn() },
+        },
+        {
           provide: CurrencyService,
           useValue: { getExchangeCurrencyRate: jest.fn() },
+        },
+        {
+          provide: RubSourceCompareService,
+          useValue: { compare: jest.fn() },
         },
       ],
     })
