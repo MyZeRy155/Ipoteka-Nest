@@ -46,7 +46,11 @@ describe('CurrencyService', () => {
     cacheManager.get.mockResolvedValue(undefined);
     configService.get.mockReturnValue('dummy');
     resilientHttpService.fetchWithRetry.mockReturnValue({
-      data: { base_code: 'USD', conversion_rates: { USD: 1, EUR: 0.9 } },
+      data: {
+        base_code: 'USD',
+        conversion_rates: { USD: 1, EUR: 0.9 },
+        time_last_update_unix: 1735000000,
+      },
     });
 
     const result = await service.getExchangeCurrencyRate('USD');
@@ -56,6 +60,7 @@ describe('CurrencyService', () => {
       rates: { USD: 1, EUR: 0.9 },
       source: 'Exchange_API',
       fetchedAt: expect.any(Date),
+      sourceUpdatedAt: expect.any(Date),
     });
     expect(cacheManager.set).toHaveBeenCalledWith(
       'currency-USD',
@@ -98,8 +103,8 @@ describe('CurrencyService', () => {
       new Error('network error'),
     );
     parseService.parseCbRFCurrencyRate.mockReturnValue({
-      USD: 90,
-      EUR: 100,
+      rates: { USD: 90, EUR: 100 },
+      updatedAt: new Date('2026-08-24'),
     });
     const result = await service.getExchangeCurrencyRate('RUB');
 
@@ -108,6 +113,7 @@ describe('CurrencyService', () => {
       rates: { USD: 1 / 90, EUR: 1 / 100, RUB: 1 },
       source: 'Parser-CBRF',
       fetchedAt: expect.any(Date),
+      sourceUpdatedAt: expect.any(Date),
     });
     expect(cacheManager.set).toHaveBeenCalledWith(
       'currency-RUB',

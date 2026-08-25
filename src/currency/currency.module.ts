@@ -7,6 +7,7 @@ import KeyvRedis from '@keyv/redis';
 import { ParseService } from '../parser/parse-currency-rate.cbrf';
 import { ResilientHttpModule } from '../common/resilient-http/resilient-http.module';
 import { CurrencyHealthService } from './currency-health.service';
+import { RubSourceCompareService } from './rub-source-compare.service';
 
 @Module({
   imports: [
@@ -22,7 +23,12 @@ import { CurrencyHealthService } from './currency-health.service';
     }),
     ResilientHttpModule,
   ],
-  providers: [CurrencyService, ParseService, CurrencyHealthService],
+  providers: [
+    CurrencyService,
+    ParseService,
+    CurrencyHealthService,
+    RubSourceCompareService,
+  ],
   controllers: [CurrencyController],
 })
 export class CurrencyModule {}

@@ -5,7 +5,11 @@ import { ResilientHttpService } from '../common/resilient-http/resilient-http.se
 @Injectable()
 export class ParseService {
   constructor(private resilientHttpService: ResilientHttpService) {}
-  async parseCbRFCurrencyRate(): Promise<Record<string, number>> {
+
+  async parseCbRFCurrencyRate(): Promise<{
+    rates: Record<string, number>;
+    updatedAt: Date;
+  }> {
     const url: string = 'https://cbr.ru/currency_base/daily/';
     const response = await this.resilientHttpService.fetchWithRetry(url, 4);
     const $ = cheerio.load(response.data);
@@ -28,6 +32,19 @@ export class ParseService {
         'ЦБР не вернул ни одного курса — возможно, изменилась разметка ',
       );
     }
-    return result;
+    return { rates: result, updatedAt: this.extractSourceUpdatedAt($) };
+  }
+  private extractSourceUpdatedAt($: cheerio.CheerioAPI): Date {
+    const text = $('.datepicker-filter_button').text().trim();
+    const match = text.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+
+    if (!match) {
+      throw new Error(
+        'Не удалось найти дату обновления курсов на странице ЦБР',
+      );
+    }
+
+    const [, day, month, year] = match;
+    return new Date(Number(year), Number(month) - 1, Number(day));
   }
 }

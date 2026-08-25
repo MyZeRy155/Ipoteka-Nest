@@ -7,13 +7,15 @@ export function apiMapper(response: AxiosResponse<any>): CurrencyRatesDto {
     rates: response.data.conversion_rates,
     source: 'Exchange_API',
     fetchedAt: new Date(),
+    sourceUpdatedAt: new Date(response.data.time_last_update_unix * 1000),
   };
 }
-export function parserMapper(
-  cbRfRates: Record<string, number>,
-): CurrencyRatesDto {
+export function parserMapper(cbRfRates: {
+  rates: Record<string, number>;
+  updatedAt: Date;
+}): CurrencyRatesDto {
   const rates = Object.fromEntries(
-    Object.entries(cbRfRates).map(([code, rubPerUnit]) => [
+    Object.entries(cbRfRates.rates).map(([code, rubPerUnit]) => [
       code,
       1 / rubPerUnit,
     ]),
@@ -25,5 +27,6 @@ export function parserMapper(
     rates,
     source: 'Parser-CBRF',
     fetchedAt: new Date(),
+    sourceUpdatedAt: cbRfRates.updatedAt,
   };
 }
