@@ -11,6 +11,7 @@ export class AuditLog {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Index()
   @Column('int', { nullable: true })
   userId: number | null;
 
@@ -23,6 +24,12 @@ export class AuditLog {
 
   @Column('varchar', { length: 255 })
   requestedUrl: string;
+
+  @Column('varchar', { length: 10 })
+  method: string;
+
+  @Column('int')
+  statusCode: number;
 
   @Index()
   @CreateDateColumn()

@@ -12,6 +12,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { GeoModule } from './geo/geo.module';
 import { AuditLog } from './audit/entities/audit-log.entity';
+import { AuditModule } from './audit/audit.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AuditLog } from './audit/entities/audit-log.entity';
     UsersModule,
     CurrencyModule,
     GeoModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [

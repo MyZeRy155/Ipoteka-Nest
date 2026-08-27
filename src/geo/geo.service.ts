@@ -14,6 +14,9 @@ export class GeoService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
   async getGeoLocation(ip: string): Promise<GeoLocationDto> {
+    if (this.isNonPublicIp(ip)) {
+      return this.fallback();
+    }
     const key = 'geo-' + ip;
     const cached = await this.cacheManager.get<GeoLocationDto>(key);
     if (cached) {
@@ -31,8 +34,25 @@ export class GeoService {
         return result;
       }
     } catch (error) {
-      this.logger.error(`Не удалось получить геоданные для IP ${ip}`, error);
-      return { countryCode: 'UNKNOWN', city: 'Unknown', isFallback: true };
+      this.logger.warn(
+        `Не удалось получить геоданные для IP ${ip}: ${error instanceof Error ? error.message : error}`,
+      );
+      return this.fallback();
     }
+  }
+  private isNonPublicIp(ip: string): boolean {
+    if (!ip || ip === 'unknown') return true;
+    return (
+      ip === '::1' ||
+      ip.startsWith('127.') ||
+      ip.startsWith('10.') ||
+      ip.startsWith('192.168.') ||
+      ip.startsWith('169.254.') ||
+      /^172\.(1[6-9]|2\d|3[01])\./.test(ip)
+    );
+  }
+
+  private fallback(): GeoLocationDto {
+    return { countryCode: 'UNKNOWN', city: 'Unknown', isFallback: true };
   }
 }
