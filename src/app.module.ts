@@ -10,6 +10,8 @@ import { UsersModule } from './users/users.module';
 import { CurrencyModule } from './currency/currency.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { GeoModule } from './geo/geo.module';
+import { AuditLog } from './audit/entities/audit-log.entity';
 
 @Module({
   imports: [
@@ -30,12 +32,13 @@ import { APP_GUARD } from '@nestjs/core';
         username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [Calculation],
+        entities: [Calculation, AuditLog],
       }),
     }),
     AuthModule,
     UsersModule,
     CurrencyModule,
+    GeoModule,
   ],
   controllers: [AppController],
   providers: [
