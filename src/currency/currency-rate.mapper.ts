@@ -1,6 +1,12 @@
 import { CurrencyRatesDto } from './dto/currency-rates.dto';
 import { AxiosResponse } from 'axios';
 
+export interface ExchangeRateApiResponse {
+  base_code: string;
+  conversion_rates: Record<string, number>;
+  time_last_update_unix: number;
+}
+
 export function apiMapper(response: AxiosResponse<any>): CurrencyRatesDto {
   return {
     baseCurrency: response.data.base_code,

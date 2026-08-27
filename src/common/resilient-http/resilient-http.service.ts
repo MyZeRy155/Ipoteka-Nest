@@ -7,11 +7,11 @@ import { firstValueFrom } from 'rxjs';
 export class ResilientHttpService {
   constructor(private httpService: HttpService) {}
 
-  async fetchWithRetry(url: string, maxAttempts: number) {
+  async fetchWithRetry<T = any>(url: string, maxAttempts: number) {
     const baseDelay: number = 1000;
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
-        return await firstValueFrom(this.httpService.get(url));
+        return await firstValueFrom(this.httpService.get<T>(url));
       } catch (error) {
         if (attempt === maxAttempts - 1) {
           throw error;
