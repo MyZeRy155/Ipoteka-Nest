@@ -13,6 +13,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { GeoModule } from './geo/geo.module';
 import { AuditLog } from './audit/entities/audit-log.entity';
 import { AuditModule } from './audit/audit.module';
+import { WhiteListIp } from './whitelist/entities/whitelist.entity';
+import { WhitelistModule } from './whitelist/whitelist.module';
 
 @Module({
   imports: [
@@ -33,7 +35,7 @@ import { AuditModule } from './audit/audit.module';
         username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [Calculation, AuditLog],
+        entities: [Calculation, AuditLog, WhiteListIp],
       }),
     }),
     AuthModule,
@@ -41,6 +43,7 @@ import { AuditModule } from './audit/audit.module';
     CurrencyModule,
     GeoModule,
     AuditModule,
+    WhitelistModule,
   ],
   controllers: [AppController],
   providers: [

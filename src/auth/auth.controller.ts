@@ -11,7 +11,9 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { Throttle } from '@nestjs/throttler';
+import { SkipWhiteList } from '../whitelist/skip-whitelist.decorator';
 
+@SkipWhiteList()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
