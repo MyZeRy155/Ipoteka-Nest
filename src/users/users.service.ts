@@ -9,6 +9,9 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
+  async create(username: string, hashedPassword: string) {
+    return this.userRepository.save({ username, hashedPassword });
+  }
   async findOne(username: string): Promise<User | null> {
     return this.userRepository.findOneBy({ username });
   }
