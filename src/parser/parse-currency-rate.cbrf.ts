@@ -11,7 +11,10 @@ export class ParseService {
     updatedAt: Date;
   }> {
     const url: string = 'https://cbr.ru/currency_base/daily/';
-    const response = await this.resilientHttpService.fetchWithRetry(url, 4);
+    const response = await this.resilientHttpService.fetchWithRetry<string>(
+      url,
+      4,
+    );
     const $ = cheerio.load(response.data);
     const result: Record<string, number> = {};
 

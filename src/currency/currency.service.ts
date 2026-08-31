@@ -7,7 +7,11 @@ import { ConfigService } from '@nestjs/config';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { ResilientHttpService } from '../common/resilient-http/resilient-http.service';
 import { ParseService } from '../parser/parse-currency-rate.cbrf';
-import { apiMapper, parserMapper } from './currency-rate.mapper';
+import {
+  apiMapper,
+  ExchangeRateApiResponse,
+  parserMapper,
+} from './currency-rate.mapper';
 import { CurrencyRatesDto } from './dto/currency-rates.dto';
 
 @Injectable()
@@ -31,7 +35,11 @@ export class CurrencyService {
         '/latest/' +
         currency;
       try {
-        const response = await this.resilientHttpSerivce.fetchWithRetry(url, 4);
+        const response =
+          await this.resilientHttpSerivce.fetchWithRetry<ExchangeRateApiResponse>(
+            url,
+            4,
+          );
         if (
           !response.data ||
           typeof response.data.conversion_rates !== 'object'

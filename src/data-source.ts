@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 import { Calculation } from './mortgage/entities/calculation';
+import { AuditLog } from './audit/entities/audit-log.entity';
+import { WhiteListIp } from './whitelist/entities/whitelist.entity';
 
 dotenv.config();
 
@@ -11,6 +13,6 @@ export default new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [Calculation],
+  entities: [Calculation, AuditLog, WhiteListIp],
   migrations: ['src/migrations/*.ts'],
 });

@@ -4,7 +4,8 @@ import { ResilientHttpService } from '../common/resilient-http/resilient-http.se
 import { ParseService } from '../parser/parse-currency-rate.cbrf';
 import { apiMapper, parserMapper } from './currency-rate.mapper';
 import {
-  CompareReport, compareSources,
+  CompareReport,
+  compareSources,
   resolveSource,
   Sources,
 } from '../common/resolve-source';
@@ -25,13 +26,13 @@ export class RubSourceCompareService {
       '/latest/RUB';
 
     const [primarySettled, fallbackSettled] = await Promise.allSettled([
-      this.resilientHttpService.fetchWithRetry(url, 4).then(apiMapper),
+      this.resilientHttpService.fetchWithRetry<any>(url, 4).then(apiMapper),
       this.parseService.parseCbRFCurrencyRate().then(parserMapper),
     ]);
 
     const x = resolveSource(Sources.exchangeRateAPI, primarySettled);
     const y = resolveSource(Sources.cbRF, fallbackSettled);
 
-    return compareSources(x,y)
+    return compareSources(x, y);
   }
 }
