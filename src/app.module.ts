@@ -15,6 +15,7 @@ import { AuditLog } from './audit/entities/audit-log.entity';
 import { AuditModule } from './audit/audit.module';
 import { WhiteListIp } from './whitelist/entities/whitelist.entity';
 import { WhitelistModule } from './whitelist/whitelist.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -35,7 +36,7 @@ import { WhitelistModule } from './whitelist/whitelist.module';
         username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [Calculation, AuditLog, WhiteListIp],
+        entities: [Calculation, AuditLog, WhiteListIp, User],
       }),
     }),
     AuthModule,
