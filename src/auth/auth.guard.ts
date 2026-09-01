@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
     }
     try {
       request['user'] = await this.jwtService.verifyAsync(token);
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('Ошибка авторизации');
     }
     return true;

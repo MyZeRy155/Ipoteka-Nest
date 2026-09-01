@@ -18,6 +18,9 @@ export class User {
   @Column('varchar', { length: 255 })
   hashedPassword: string;
 
+  @Column('varchar', { length: 255, nullable: true })
+  hashedRefreshToken: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
 }
