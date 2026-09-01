@@ -60,6 +60,7 @@ export class AuthService {
     await this.usersService.setRefreshTokenHash(user.id, hash);
     return { access_token, refresh_token };
   }
+
   async refreshTokens(
     userId: number,
     rawRefreshToken: string,

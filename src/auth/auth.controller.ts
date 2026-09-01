@@ -22,14 +22,14 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Throttle({ auth: {} })
   @Post('login')
   signIn(@Body() dto: LoginDto) {
     return this.authService.signIn(dto.username, dto.password);
   }
 
   @HttpCode(HttpStatus.CREATED)
-  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Throttle({ auth: {} })
   @Post('register')
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
@@ -43,7 +43,7 @@ export class AuthController {
 
   @UseGuards(RefreshTokenGuard)
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Throttle({ auth: {} })
   @Post('refresh')
   refresh(@Request() req) {
     return this.authService.refreshTokens(req.user.sub, req.refreshToken);
