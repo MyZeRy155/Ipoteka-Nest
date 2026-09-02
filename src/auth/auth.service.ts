@@ -76,10 +76,15 @@ export class AuthService {
   private async issueTokens(
     user: Pick<User, 'id' | 'username' | 'role'>,
   ): Promise<TokenPair> {
-    const payload = { sub: user.id, username: user.username, role: user.role };
+    const accessPayload = {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    };
+    const refreshPayload = { sub: user.id };
     const [access_token, refresh_token] = await Promise.all([
-      this.jwtService.signAsync(payload),
-      this.jwtService.signAsync(payload, {
+      this.jwtService.signAsync(accessPayload),
+      this.jwtService.signAsync(refreshPayload, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
         expiresIn: this.configService.get('JWT_REFRESH_TTL'),
       }),
