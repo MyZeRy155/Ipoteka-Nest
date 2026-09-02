@@ -5,11 +5,19 @@ import {
   Index,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Role } from './role.enum';
+import { UserStatus } from './status.enum';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ type: 'varchar', default: Role.User })
+  role: Role;
+
+  @Column({ type: 'varchar', default: UserStatus.Active })
+  status: UserStatus;
 
   @Index({ unique: true })
   @Column('varchar', { length: 255 })

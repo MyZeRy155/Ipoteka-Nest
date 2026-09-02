@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
@@ -10,6 +11,9 @@ import { ConfigService } from '@nestjs/config';
 import bcrypt from 'bcrypt';
 import { User } from '../users/entities/user.entity';
 import { hashRefreshToken, refreshTokensMatch } from './refresh-token.util';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { UserStatus } from '../users/entities/status.enum';
+
 export type TokenPair = { access_token: string; refresh_token: string };
 @Injectable()
 export class AuthService {
@@ -24,9 +28,12 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException();
     }
+    if (user.status === UserStatus.Blocked) {
+      throw new UnauthorizedException('Аккаунт заблокирован');
+    }
     const isMatch = await bcrypt.compare(pass, user.hashedPassword);
     if (!isMatch) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Неверные логин или пароль');
     }
     return this.issueTokens(user);
   }
@@ -45,10 +52,31 @@ export class AuthService {
     return this.issueTokens(user);
   }
 
-  private async issueTokens(
-    user: Pick<User, 'id' | 'username'>,
+  async changePassword(
+    userId: number,
+    dto: ChangePasswordDto,
   ): Promise<TokenPair> {
-    const payload = { sub: user.id, username: user.username };
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    if (!(await bcrypt.compare(dto.currentPassword, user.hashedPassword))) {
+      throw new UnauthorizedException('Введен неверный пароль');
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      dto.newPassword,
+      this.configService.get('BCRYPT_SALT_ROUNDS', 10),
+    );
+    await this.usersService.refreshPassword(userId, hashedPassword);
+    return this.issueTokens(user);
+  }
+
+  private async issueTokens(
+    user: Pick<User, 'id' | 'username' | 'role'>,
+  ): Promise<TokenPair> {
+    const payload = { sub: user.id, username: user.username, role: user.role };
     const [access_token, refresh_token] = await Promise.all([
       this.jwtService.signAsync(payload),
       this.jwtService.signAsync(payload, {

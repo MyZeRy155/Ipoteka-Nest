@@ -7,6 +7,7 @@ import {
   Post,
   UseGuards,
   Request,
+  Patch,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
@@ -15,6 +16,8 @@ import { SkipWhiteList } from '../whitelist/skip-whitelist.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenGuard } from './refresh-token.guard';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @SkipWhiteList()
 @Controller('auth')
@@ -36,12 +39,14 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
   }
 
   @UseGuards(RefreshTokenGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @Throttle({ auth: {} })
   @Post('refresh')
@@ -50,9 +55,17 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @Post('logout')
   logout(@Request() req) {
     return this.authService.logout(req.user.sub);
+  }
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @Patch('/users/me/password')
+  async changePassword(@Request() req, @Body() dto: ChangePasswordDto) {
+    const id = req.user.sub;
+    return await this.authService.changePassword(id, dto);
   }
 }
