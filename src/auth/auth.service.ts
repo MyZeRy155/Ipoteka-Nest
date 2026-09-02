@@ -99,11 +99,14 @@ export class AuthService {
     rawRefreshToken: string,
   ): Promise<TokenPair> {
     const user = await this.usersService.findById(userId);
-    if (!user || !user.hashedRefreshToken) {
-      throw new UnauthorizedException();
+    if (!user) {
+      throw new UnauthorizedException('Пользователь не найден');
+    }
+    if (!user.hashedRefreshToken) {
+      throw new UnauthorizedException('Активная сессия отсутствует');
     }
     if (!refreshTokensMatch(rawRefreshToken, user.hashedRefreshToken)) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Refresh-токен недействителен');
     }
     return this.issueTokens(user);
   }
