@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { CreateWhitelistIpDto } from './dto/create-whitelist-ip.dto';
 import { WhiteListIpDto } from './dto/whitelist-ip.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UpdateWhitelistIpDto } from './dto/update-whitelist-ip.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { SkipWhiteList } from './skip-whitelist.decorator';
@@ -20,6 +20,7 @@ import { SkipWhiteList } from './skip-whitelist.decorator';
 @ApiTags('whitelist')
 @Controller('whitelist')
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 @SkipWhiteList()
 export class WhiteListController {
   constructor(private readonly whitelistService: WhitelistService) {}

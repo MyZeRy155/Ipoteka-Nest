@@ -15,17 +15,35 @@ import { AuditLog } from './audit/entities/audit-log.entity';
 import { AuditModule } from './audit/audit.module';
 import { WhiteListIp } from './whitelist/entities/whitelist.entity';
 import { WhitelistModule } from './whitelist/whitelist.module';
+import { User } from './users/entities/user.entity';
+import { envValidationSchema } from './env-validation.schema';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000,
-        limit: 20,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: envValidationSchema,
+      validationOptions: {
+        allowUnknown: true,
+        abortEarly: false,
       },
-    ]),
+    }),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => [
+        {
+          name: 'default',
+          ttl: config.getOrThrow<number>('THROTTLE_TTL'),
+          limit: config.getOrThrow<number>('THROTTLE_LIMIT'),
+        },
+        {
+          name: 'auth',
+          ttl: config.getOrThrow<number>('AUTH_THROTTLE_TTL'),
+          limit: config.getOrThrow<number>('AUTH_THROTTLE_LIMIT'),
+        },
+      ],
+    }),
     MortgageModule,
-    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -35,7 +53,7 @@ import { WhitelistModule } from './whitelist/whitelist.module';
         username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [Calculation, AuditLog, WhiteListIp],
+        entities: [Calculation, AuditLog, WhiteListIp, User],
       }),
     }),
     AuthModule,

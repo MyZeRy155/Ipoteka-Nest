@@ -3,9 +3,11 @@ import { AuthGuard } from '../auth/auth.guard';
 import { CurrencyService } from './currency.service';
 import { CurrencyHealthService } from './currency-health.service';
 import { RubSourceCompareService } from './rub-source-compare.service';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('currency')
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class CurrencyController {
   constructor(
     private readonly currencyService: CurrencyService,
