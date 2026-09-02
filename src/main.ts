@@ -13,6 +13,7 @@ async function bootstrap() {
     .setTitle('IpotekaNest')
     .setVersion('1.0')
     .addServer('http://localhost:3000')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
