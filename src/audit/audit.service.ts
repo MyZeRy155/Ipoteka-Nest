@@ -12,6 +12,7 @@ import { GeoService } from '../geo/geo.service';
 import { AuditMeta } from './audit-meta.interface';
 import { GetAuditLogsQueryDto } from './dto/get-audit-logs-query.dto';
 import { toAuditLogDto } from './dto/audit-log.dto';
+import { paginate } from '../common/paginate';
 
 @Injectable()
 export class AuditService {
@@ -57,15 +58,15 @@ export class AuditService {
     else if (from) where.createdAt = MoreThanOrEqual(from);
     else if (to) where.createdAt = LessThanOrEqual(to);
 
-    const page = query.page ?? 1;
-    const limit = query.limit ?? 20;
-
     const [rows, total] = await this.auditRepo.findAndCount({
-      where,
       order: { createdAt: 'DESC', id: 'DESC' },
-      skip: (page - 1) * limit,
-      take: limit,
+      ...paginate(query.page, query.limit),
     });
-    return { data: rows.map(toAuditLogDto), total, page, limit };
+    return {
+      data: rows.map(toAuditLogDto),
+      total,
+      page: query.page,
+      limit: query.limit,
+    };
   }
 }

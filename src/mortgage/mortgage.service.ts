@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Calculation } from './entities/calculation';
 import { Between, Repository } from 'typeorm';
 import { GetCalculationsQueryDto } from './dto/get-calculations-query.dto';
+import { paginate } from '../common/paginate';
 
 @Injectable()
 export class MortgageService {
@@ -83,14 +84,12 @@ export class MortgageService {
   public async getAllCalcRecords(
     query: GetCalculationsQueryDto,
   ): Promise<MortgageRecordResultDto[]> {
-    const skip = (query.page - 1) * query.limit;
-    const take = query.limit;
     const records = await this.calculationRepository.find({
-      skip,
-      take,
+      order: { id: 'ASC' },
       where: {
         interestRate: Between(query.minInterestRate, query.maxInterestRate),
       },
+      ...paginate(query.page, query.limit),
     });
 
     return records.map(

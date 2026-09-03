@@ -9,31 +9,9 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
-export class GetAuditLogsQueryDto {
-  @ApiProperty({
-    required: false,
-    example: 1,
-    description: 'Номер страницы (начиная с 1). По умолчанию — 1',
-  })
-  @Type(() => Number)
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  page?: number = 1;
-
-  @ApiProperty({
-    required: false,
-    example: 20,
-    description: 'Записей на странице (1–50). По умолчанию — 20',
-  })
-  @Type(() => Number)
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Max(50)
-  limit?: number = 20;
-
+export class GetAuditLogsQueryDto extends PaginationQueryDto {
   @ApiProperty({
     required: false,
     example: 42,

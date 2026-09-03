@@ -16,7 +16,6 @@ import { GetUsersQueryDto } from './dto/get-users-query.dto';
 import { Role } from './entities/role.enum';
 import { Roles } from './roles-decorator';
 import { RolesGuard } from './roles.guard';
-import { User } from './entities/user.entity';
 
 @UseGuards(AuthGuard)
 @ApiBearerAuth()

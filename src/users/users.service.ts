@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import { UserStatus } from './entities/status.enum';
+import { paginate } from '../common/paginate';
 
 @Injectable()
 export class UsersService {
@@ -74,14 +75,15 @@ export class UsersService {
   }
 
   async findAll(query: GetUsersQueryDto) {
-    const page = query.page ?? 1;
-    const limit = query.limit ?? 20;
-
     const [rows, total] = await this.userRepository.findAndCount({
       order: { id: 'ASC' },
-      skip: (page - 1) * limit,
-      take: limit,
+      ...paginate(query.page, query.limit),
     });
-    return { data: rows.map(toUserResponse), total, page, limit };
+    return {
+      data: rows.map(toUserResponse),
+      total: total,
+      page: query.page,
+      limit: query.limit,
+    };
   }
 }
