@@ -1,19 +1,9 @@
 import { IsInt, IsNumber, IsOptional, Max, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
-export class GetCalculationsQueryDto {
-  @ApiProperty({
-    required: false,
-    example: 1,
-    description: 'Номер страницы (начиная с 1). По умолчанию — 1',
-  })
-  @Type(() => Number)
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  page: number = 1;
-
+export class GetCalculationsQueryDto extends PaginationQueryDto {
   @ApiProperty({
     required: false,
     example: 10,
