@@ -1,11 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpService } from '@nestjs/axios';
-import { CurrencyModule } from '../src/currency/currency.module';
-import { AuthModule } from '../src/auth/auth.module';
+import { AppModule } from '../src/app.module';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import request from 'supertest';
-import { ConfigModule } from '@nestjs/config';
 import { of, throwError } from 'rxjs';
 import { HttpExceptionFilter } from '../src/http-exception.filter';
 
@@ -16,11 +14,7 @@ describe('Auth + Currency (e2e)', () => {
   beforeAll(async () => {
     httpService = { get: jest.fn() };
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
-        AuthModule,
-        CurrencyModule,
-      ],
+      imports: [AppModule],
     })
       .overrideProvider(HttpService)
       .useValue(httpService)
@@ -31,6 +25,10 @@ describe('Auth + Currency (e2e)', () => {
     app = moduleFixture.createNestApplication();
     app.useGlobalFilters(new HttpExceptionFilter());
     await app.init();
+
+    await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({ username: 'Alexandr', password: 'strongpass' });
   });
 
   afterAll(async () => {

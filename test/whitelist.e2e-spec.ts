@@ -47,6 +47,10 @@ describe('Whitelist (e2e)', () => {
 
     repo = app.get(getRepositoryToken(WhiteListIp), { strict: false });
 
+    await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({ username: 'Alexandr', password: 'strongpass' });
+
     const res = await request(app.getHttpServer())
       .post('/auth/login')
       .send({ username: 'Alexandr', password: 'strongpass' });
