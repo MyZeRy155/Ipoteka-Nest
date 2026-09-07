@@ -3,9 +3,13 @@ import { CalculateMortgageDto } from './dto/calculate-mortgage.dto';
 import MortgageRecordResultDto from './dto/mortgage-result.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Calculation } from './entities/calculation';
-import { Between, Repository } from 'typeorm';
+import { Between, FindOptionsWhere, Repository } from 'typeorm';
 import { GetCalculationsQueryDto } from './dto/get-calculations-query.dto';
 import { paginate } from '../common/paginate';
+import { User } from '../users/entities/user.entity';
+import { Role } from '../users/entities/role.enum';
+
+type Requester = { sub: number; role: Role };
 
 @Injectable()
 export class MortgageService {
@@ -48,6 +52,7 @@ export class MortgageService {
 
   public async calculateMortgage(
     dto: CalculateMortgageDto,
+    userId: number,
   ): Promise<MortgageRecordResultDto> {
     const monthlyPayment: number = this.calcMonthlyPayment(
       dto.interestRate,
@@ -63,6 +68,7 @@ export class MortgageService {
       dto.mortgageAmount,
     );
     const savedCalculation = await this.calculationRepository.save({
+      user: { id: userId } as User,
       interestRate: dto.interestRate,
       mortgageAmount: dto.mortgageAmount,
       mortgageTermMonths: dto.mortgageTermMonths,
@@ -83,12 +89,18 @@ export class MortgageService {
 
   public async getAllCalcRecords(
     query: GetCalculationsQueryDto,
+    requester: Requester,
   ): Promise<MortgageRecordResultDto[]> {
+    const where: FindOptionsWhere<Calculation> = {
+      interestRate: Between(query.minInterestRate, query.maxInterestRate),
+    };
+    if (requester.role !== Role.Admin) {
+      where.user = { id: requester.sub };
+    }
+
     const records = await this.calculationRepository.find({
       order: { id: 'ASC' },
-      where: {
-        interestRate: Between(query.minInterestRate, query.maxInterestRate),
-      },
+      where,
       ...paginate(query.page, query.limit),
     });
 
@@ -106,9 +118,18 @@ export class MortgageService {
     );
   }
 
-  public async getOneCalcRecord(id: number): Promise<MortgageRecordResultDto> {
-    const record = await this.calculationRepository.findOneBy({ id: id });
-    if (!record) {
+  public async getOneCalcRecord(
+    id: number,
+    requester: Requester,
+  ): Promise<MortgageRecordResultDto> {
+    const record = await this.calculationRepository.findOne({
+      where: { id },
+      relations: { user: true },
+    });
+    if (
+      !record ||
+      (requester.role !== Role.Admin && record.user.id !== requester.sub)
+    ) {
       throw new NotFoundException(`Calculation with id ${id} not found`);
     }
     return new MortgageRecordResultDto(
@@ -121,9 +142,18 @@ export class MortgageService {
       record.id,
     );
   }
-  public async deleteOneCalcRecord(id: number): Promise<void> {
-    const record = await this.calculationRepository.findOneBy({ id: id });
-    if (!record) {
+  public async deleteOneCalcRecord(
+    id: number,
+    requester: Requester,
+  ): Promise<void> {
+    const record = await this.calculationRepository.findOne({
+      where: { id },
+      relations: { user: true },
+    });
+    if (
+      !record ||
+      (requester.role !== Role.Admin && record.user.id !== requester.sub)
+    ) {
       throw new NotFoundException(`Calculation with id ${id} not found`);
     }
     await this.calculationRepository.delete({ id: id });
