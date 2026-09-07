@@ -1,27 +1,34 @@
 import { useState, type FormEvent } from 'react';
-import { ApiError, login, register } from './api';
+import { ApiError, login, register, type TokenPair } from './api';
 
 export function AuthForm({
   onLoggedIn,
 }: {
-  onLoggedIn: (token: string) => void;
+  onLoggedIn: (tokens: TokenPair) => void;
 }) {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (mode === 'register' && password !== confirmPassword) {
+      setError('Пароли не совпадают');
+      return;
+    }
+
     setLoading(true);
     try {
-      const { access_token } =
+      const tokens =
         mode === 'login'
           ? await login(username, password)
           : await register(username, password);
-      onLoggedIn(access_token);
+      onLoggedIn(tokens);
     } catch (err) {
       setError(
         err instanceof ApiError
@@ -59,6 +66,18 @@ export function AuthForm({
           required
         />
       </label>
+      {mode === 'register' && (
+        <label>
+          Подтвердите пароль
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            minLength={8}
+            required
+          />
+        </label>
+      )}
       {error && <p className="error">{error}</p>}
       <button type="submit" disabled={loading}>
         {loading
@@ -72,6 +91,7 @@ export function AuthForm({
         className="link"
         onClick={() => {
           setError(null);
+          setConfirmPassword('');
           setMode(mode === 'login' ? 'register' : 'login');
         }}
       >

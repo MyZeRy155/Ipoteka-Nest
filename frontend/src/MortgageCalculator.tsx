@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { ApiError, calculateMortgage, type MortgageResult } from './api';
+import { formatThousands, sanitizeNumericInput } from './format';
 
 const currency = new Intl.NumberFormat('ru-RU', {
   style: 'currency',
@@ -7,11 +8,30 @@ const currency = new Intl.NumberFormat('ru-RU', {
   maximumFractionDigits: 2,
 });
 
+function validate(
+  interestRate: string,
+  mortgageAmount: string,
+  mortgageTermMonths: string,
+): string | null {
+  const rate = Number(interestRate);
+  const amount = Number(mortgageAmount);
+  const term = Number(mortgageTermMonths);
+
+  if (!interestRate || Number.isNaN(rate) || rate < 0.1 || rate > 50) {
+    return 'Процентная ставка должна быть от 0.1 до 50%';
+  }
+  if (!mortgageAmount || Number.isNaN(amount) || amount < 1) {
+    return 'Сумма займа должна быть больше 0';
+  }
+  if (!mortgageTermMonths || Number.isNaN(term) || term < 1 || term > 360) {
+    return 'Срок должен быть от 1 до 360 месяцев';
+  }
+  return null;
+}
+
 export function MortgageCalculator({
-  token,
   onUnauthorized,
 }: {
-  token: string;
   onUnauthorized: () => void;
 }) {
   const [interestRate, setInterestRate] = useState('12');
@@ -23,18 +43,22 @@ export function MortgageCalculator({
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setResult(null);
+
+    const validationError = validate(interestRate, mortgageAmount, mortgageTermMonths);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setError(null);
     setLoading(true);
-    setResult(null);
     try {
-      const data = await calculateMortgage(
-        {
-          interestRate: Number(interestRate),
-          mortgageAmount: Number(mortgageAmount),
-          mortgageTermMonths: Number(mortgageTermMonths),
-        },
-        token,
-      );
+      const data = await calculateMortgage({
+        interestRate: Number(interestRate),
+        mortgageAmount: Number(mortgageAmount),
+        mortgageTermMonths: Number(mortgageTermMonths),
+      });
       setResult(data);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
@@ -53,33 +77,30 @@ export function MortgageCalculator({
         <label>
           Процентная ставка, %
           <input
-            type="number"
-            step="0.1"
-            min="0.1"
-            max="50"
-            value={interestRate}
-            onChange={(e) => setInterestRate(e.target.value)}
+            type="text"
+            inputMode="decimal"
+            value={formatThousands(interestRate)}
+            onChange={(e) => setInterestRate(sanitizeNumericInput(e.target.value, true))}
             required
           />
         </label>
         <label>
           Сумма займа, ₽
           <input
-            type="number"
-            min="1"
-            value={mortgageAmount}
-            onChange={(e) => setMortgageAmount(e.target.value)}
+            type="text"
+            inputMode="numeric"
+            value={formatThousands(mortgageAmount)}
+            onChange={(e) => setMortgageAmount(sanitizeNumericInput(e.target.value, false))}
             required
           />
         </label>
         <label>
           Срок, мес.
           <input
-            type="number"
-            min="1"
-            max="360"
-            value={mortgageTermMonths}
-            onChange={(e) => setMortgageTermMonths(e.target.value)}
+            type="text"
+            inputMode="numeric"
+            value={formatThousands(mortgageTermMonths)}
+            onChange={(e) => setMortgageTermMonths(sanitizeNumericInput(e.target.value, false))}
             required
           />
         </label>
@@ -102,4 +123,3 @@ export function MortgageCalculator({
     </div>
   );
 }
-

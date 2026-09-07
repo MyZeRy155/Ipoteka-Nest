@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { ApiError, getCalculations, type MortgageResult } from './api';
 
 const PAGE_SIZE = 10;
@@ -10,22 +10,21 @@ const currency = new Intl.NumberFormat('ru-RU', {
 });
 
 export function CalculationHistory({
-  token,
   onUnauthorized,
 }: {
-  token: string;
   onUnauthorized: () => void;
 }) {
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<MortgageResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    getCalculations(page, PAGE_SIZE, token)
+    getCalculations(page, PAGE_SIZE)
       .then((data) => {
         if (!cancelled) setItems(data);
       })
@@ -43,12 +42,12 @@ export function CalculationHistory({
     return () => {
       cancelled = true;
     };
-  }, [page, token, onUnauthorized]);
+  }, [page, onUnauthorized]);
 
   const hasNextPage = items.length === PAGE_SIZE;
 
   return (
-    <div className="history">
+    <div className="data-table">
       {loading && <p>Загрузка…</p>}
       {error && <p className="error">{error}</p>}
       {!loading && !error && items.length === 0 && (
@@ -56,7 +55,7 @@ export function CalculationHistory({
       )}
 
       {items.length > 0 && (
-        <table>
+        <table className="clickable">
           <thead>
             <tr>
               <th>Ставка</th>
@@ -67,12 +66,30 @@ export function CalculationHistory({
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item.id}>
-                <td>{item.interestRate}%</td>
-                <td>{currency.format(item.mortgageAmount)}</td>
-                <td>{item.mortgageTermMonths} мес.</td>
-                <td>{currency.format(item.monthlyPayment)}</td>
-              </tr>
+              <Fragment key={item.id}>
+                <tr
+                  onClick={() =>
+                    setExpandedId((current) => (current === item.id ? null : (item.id ?? null)))
+                  }
+                >
+                  <td>{item.interestRate}%</td>
+                  <td>{currency.format(item.mortgageAmount)}</td>
+                  <td>{item.mortgageTermMonths} мес.</td>
+                  <td>{currency.format(item.monthlyPayment)}</td>
+                </tr>
+                {expandedId === item.id && (
+                  <tr className="details-row">
+                    <td colSpan={4}>
+                      <dl className="inline-details">
+                        <dt>Общая сумма выплат</dt>
+                        <dd>{currency.format(item.totalDebt)}</dd>
+                        <dt>Переплата</dt>
+                        <dd>{currency.format(item.overPayment)}</dd>
+                      </dl>
+                    </td>
+                  </tr>
+                )}
+              </Fragment>
             ))}
           </tbody>
         </table>

@@ -2,33 +2,86 @@ import { useState } from 'react';
 import { AuthForm } from './AuthForm';
 import { MortgageCalculator } from './MortgageCalculator';
 import { CalculationHistory } from './CalculationHistory';
+import { Profile } from './Profile';
+import { UsersAdmin } from './UsersAdmin';
+import { WhitelistAdmin } from './WhitelistAdmin';
+import { AuditLog } from './AuditLog';
+import { CurrencyRates } from './CurrencyRates';
+import {
+  clearTokens,
+  decodeAccessToken,
+  getAccessToken,
+  setTokens,
+  type AccessTokenPayload,
+} from './authStore';
+import { logout as apiLogout, type TokenPair } from './api';
 import './App.css';
 
-const TOKEN_KEY = 'ipoteka:access_token';
+type Tab =
+  | 'calculator'
+  | 'history'
+  | 'currency'
+  | 'profile'
+  | 'users'
+  | 'whitelist'
+  | 'audit';
+
+function sessionFromStorage(): AccessTokenPayload | null {
+  const token = getAccessToken();
+  return token ? decodeAccessToken(token) : null;
+}
 
 function App() {
-  const [token, setToken] = useState<string | null>(() =>
-    localStorage.getItem(TOKEN_KEY),
+  const [session, setSession] = useState<AccessTokenPayload | null>(
+    sessionFromStorage,
   );
-  const [tab, setTab] = useState<'calculator' | 'history'>('calculator');
+  const [tab, setTab] = useState<Tab>('calculator');
 
-  function handleLoggedIn(newToken: string) {
-    localStorage.setItem(TOKEN_KEY, newToken);
-    setToken(newToken);
+  function handleLoggedIn(tokens: TokenPair) {
+    setTokens(tokens);
+    setSession(decodeAccessToken(tokens.access_token));
+    setTab('calculator');
+  }
+
+  function handleTokensRotated(tokens: TokenPair) {
+    setTokens(tokens);
+    setSession(decodeAccessToken(tokens.access_token));
+  }
+
+  function handleSessionExpired() {
+    clearTokens();
+    setSession(null);
   }
 
   function handleLogout() {
-    localStorage.removeItem(TOKEN_KEY);
-    setToken(null);
+    apiLogout().catch(() => {});
+    clearTokens();
+    setSession(null);
   }
 
-  if (!token) {
+  if (!session) {
     return (
       <main className="app">
         <AuthForm onLoggedIn={handleLoggedIn} />
       </main>
     );
   }
+
+  const isAdmin = session.role === 'admin';
+
+  const tabs: { key: Tab; label: string }[] = [
+    { key: 'calculator', label: 'Калькулятор' },
+    { key: 'history', label: 'История' },
+    { key: 'currency', label: 'Курс валют' },
+    { key: 'profile', label: 'Профиль' },
+    ...(isAdmin
+      ? ([
+          { key: 'users', label: 'Пользователи' },
+          { key: 'whitelist', label: 'Whitelist' },
+          { key: 'audit', label: 'Аудит' },
+        ] as { key: Tab; label: string }[])
+      : []),
+  ];
 
   return (
     <main className="app">
@@ -40,25 +93,42 @@ function App() {
           </button>
         </div>
         <div className="tabs">
-          <button
-            type="button"
-            className={tab === 'calculator' ? 'tab active' : 'tab'}
-            onClick={() => setTab('calculator')}
-          >
-            Калькулятор
-          </button>
-          <button
-            type="button"
-            className={tab === 'history' ? 'tab active' : 'tab'}
-            onClick={() => setTab('history')}
-          >
-            История
-          </button>
+          {tabs.map(({ key, label }) => (
+            <button
+              key={key}
+              type="button"
+              className={tab === key ? 'tab active' : 'tab'}
+              onClick={() => setTab(key)}
+            >
+              {label}
+            </button>
+          ))}
         </div>
-        {tab === 'calculator' ? (
-          <MortgageCalculator token={token} onUnauthorized={handleLogout} />
-        ) : (
-          <CalculationHistory token={token} onUnauthorized={handleLogout} />
+
+        {tab === 'calculator' && (
+          <MortgageCalculator onUnauthorized={handleSessionExpired} />
+        )}
+        {tab === 'history' && (
+          <CalculationHistory onUnauthorized={handleSessionExpired} />
+        )}
+        {tab === 'currency' && (
+          <CurrencyRates onUnauthorized={handleSessionExpired} />
+        )}
+        {tab === 'profile' && (
+          <Profile
+            session={session}
+            onTokensRotated={handleTokensRotated}
+            onUnauthorized={handleSessionExpired}
+          />
+        )}
+        {tab === 'users' && isAdmin && (
+          <UsersAdmin onUnauthorized={handleSessionExpired} />
+        )}
+        {tab === 'whitelist' && isAdmin && (
+          <WhitelistAdmin onUnauthorized={handleSessionExpired} />
+        )}
+        {tab === 'audit' && isAdmin && (
+          <AuditLog onUnauthorized={handleSessionExpired} />
         )}
       </div>
     </main>
