@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { VerificationModule } from '../verification/verification.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ConfigService } from '@nestjs/config';
       }),
       global: true,
     }),
+    VerificationModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],

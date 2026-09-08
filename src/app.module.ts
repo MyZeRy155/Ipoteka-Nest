@@ -17,6 +17,7 @@ import { WhiteListIp } from './whitelist/entities/whitelist.entity';
 import { WhitelistModule } from './whitelist/whitelist.module';
 import { User } from './users/entities/user.entity';
 import { envValidationSchema } from './env-validation.schema';
+import { UserTrustedLocation } from './verification/entities/user-trusted-location';
 
 @Module({
   imports: [
@@ -53,7 +54,13 @@ import { envValidationSchema } from './env-validation.schema';
         username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [Calculation, AuditLog, WhiteListIp, User],
+        entities: [
+          Calculation,
+          AuditLog,
+          WhiteListIp,
+          User,
+          UserTrustedLocation,
+        ],
       }),
     }),
     AuthModule,

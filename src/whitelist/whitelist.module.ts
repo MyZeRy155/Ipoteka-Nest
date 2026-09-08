@@ -6,8 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import KeyvRedis from '@keyv/redis';
 import { WhiteListController } from './whitelist.controller';
 import { WhitelistService } from './whitelist.service';
-import { APP_GUARD } from '@nestjs/core';
-import { WhiteListGuard } from './whitelist.guard';
+import { VerificationModule } from '../verification/verification.module';
 
 @Module({
   imports: [
@@ -22,12 +21,10 @@ import { WhiteListGuard } from './whitelist.guard';
         ],
       }),
     }),
+    VerificationModule,
   ],
   controllers: [WhiteListController],
-  providers: [
-    WhitelistService,
-    { provide: APP_GUARD, useClass: WhiteListGuard },
-  ],
+  providers: [WhitelistService],
   exports: [WhitelistService],
 })
 export class WhitelistModule {}
