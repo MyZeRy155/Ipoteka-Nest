@@ -13,6 +13,8 @@ import { User } from '../users/entities/user.entity';
 import { hashRefreshToken, refreshTokensMatch } from './refresh-token.util';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UserStatus } from '../users/entities/status.enum';
+import { VerificationService } from '../verification/verification.service';
+import { Request } from 'express';
 
 export type TokenPair = { access_token: string; refresh_token: string };
 @Injectable()
@@ -21,9 +23,14 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private verificationService: VerificationService,
   ) {}
 
-  async signIn(username: string, pass: string): Promise<TokenPair> {
+  async signIn(
+    username: string,
+    pass: string,
+    request: Request,
+  ): Promise<TokenPair> {
     const user = await this.usersService.findOne(username);
     if (!user) {
       throw new UnauthorizedException();
@@ -35,10 +42,11 @@ export class AuthService {
     if (!isMatch) {
       throw new UnauthorizedException('Неверные логин или пароль');
     }
+    await this.verificationService.verifyLoginLocation(user, request);
     return this.issueTokens(user);
   }
 
-  async register(dto: RegisterDto): Promise<TokenPair> {
+  async register(dto: RegisterDto, request: Request): Promise<TokenPair> {
     const existing = await this.usersService.findOne(dto.username);
     if (existing) {
       throw new ConflictException('Пользователь с таким именем уже существует');
@@ -49,6 +57,7 @@ export class AuthService {
       this.configService.get<number>('BCRYPT_SALT_ROUNDS', 10),
     );
     const user = await this.usersService.create(dto.username, hashedPassword);
+    await this.verificationService.recordLocation(user, request);
     return this.issueTokens(user);
   }
 

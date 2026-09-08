@@ -27,7 +27,7 @@ export class WhiteListGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const ip = getClientIp(request);
 
-    if (!(await this.whitelistService.isAllowed(ip))) {
+    if (!(await this.whitelistService.isTrusted(ip))) {
       throw new ForbiddenException('IP-адрес не в белом списке');
     }
     return true;

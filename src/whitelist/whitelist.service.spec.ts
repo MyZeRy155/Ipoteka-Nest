@@ -42,11 +42,11 @@ describe('WhitelistService', () => {
     service = module.get(WhitelistService);
   });
 
-  describe('isAllowed / loadSet', () => {
+  describe('isTrusted / loadSet', () => {
     it('при попадании в кэш возвращает результат и не читает БД', async () => {
       cache.get.mockResolvedValue(['1.2.3.4']);
 
-      await expect(service.isAllowed('1.2.3.4')).resolves.toBe(true);
+      await expect(service.isTrusted('1.2.3.4')).resolves.toBe(true);
       expect(repo.find).not.toHaveBeenCalled();
     });
 
@@ -54,22 +54,22 @@ describe('WhitelistService', () => {
       cache.get.mockResolvedValue(undefined);
       repo.find.mockResolvedValue([{ ipAddress: '1.2.3.4' }]);
 
-      await expect(service.isAllowed('1.2.3.4')).resolves.toBe(true);
+      await expect(service.isTrusted('1.2.3.4')).resolves.toBe(true);
       expect(cache.set).toHaveBeenCalledWith(CACHE_KEY, ['1.2.3.4'], TTL);
     });
 
-    it('пустой список = allow-all: пропускает любой IP', async () => {
+    it('пустой список: ни один IP не считается доверенным', async () => {
       cache.get.mockResolvedValue(undefined);
       repo.find.mockResolvedValue([]);
 
-      await expect(service.isAllowed('203.0.113.55')).resolves.toBe(true);
+      await expect(service.isTrusted('203.0.113.55')).resolves.toBe(false);
     });
 
     it('непустой список: IP не входит в набор → false', async () => {
       cache.get.mockResolvedValue(undefined);
       repo.find.mockResolvedValue([{ ipAddress: '1.2.3.4' }]);
 
-      await expect(service.isAllowed('9.9.9.9')).resolves.toBe(false);
+      await expect(service.isTrusted('9.9.9.9')).resolves.toBe(false);
     });
   });
 
@@ -77,9 +77,9 @@ describe('WhitelistService', () => {
     it('дубликат → ConflictException, save не вызывается', async () => {
       repo.findOneBy.mockResolvedValue({ id: 1, ipAddress: '1.2.3.4' });
 
-      await expect(
-        service.create({ ipAddress: '1.2.3.4' }),
-      ).rejects.toThrow(ConflictException);
+      await expect(service.create({ ipAddress: '1.2.3.4' })).rejects.toThrow(
+        ConflictException,
+      );
       expect(repo.save).not.toHaveBeenCalled();
     });
 
@@ -142,9 +142,9 @@ describe('WhitelistService', () => {
     it('нет записи → NotFoundException', async () => {
       repo.findOneBy.mockResolvedValue(null);
 
-      await expect(
-        service.update(42, { label: 'x' }),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.update(42, { label: 'x' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('новый IP занят другой записью → ConflictException', async () => {
@@ -152,9 +152,9 @@ describe('WhitelistService', () => {
         .mockResolvedValueOnce({ id: 1, ipAddress: '1.1.1.1', label: null })
         .mockResolvedValueOnce({ id: 2, ipAddress: '2.2.2.2', label: null });
 
-      await expect(
-        service.update(1, { ipAddress: '2.2.2.2' }),
-      ).rejects.toThrow(ConflictException);
+      await expect(service.update(1, { ipAddress: '2.2.2.2' })).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('меняется только label: сохраняет, но кэш не трогает', async () => {

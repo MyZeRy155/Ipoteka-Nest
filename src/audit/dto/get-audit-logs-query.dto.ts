@@ -55,7 +55,7 @@ export class GetAuditLogsQueryDto extends PaginationQueryDto {
   @ApiProperty({
     required: false,
     example: '2026-07-30T00:00:00Z',
-    description: 'Начало диапозона по времени',
+    description: 'Начало диапазона по времени',
   })
   @IsOptional()
   @IsDateString()
@@ -64,7 +64,7 @@ export class GetAuditLogsQueryDto extends PaginationQueryDto {
   @ApiProperty({
     required: false,
     example: '2026-08-01T00:00:00Z',
-    description: 'Конец диапозона по времени',
+    description: 'Конец диапазона по времени',
   })
   @IsOptional()
   @IsDateString()

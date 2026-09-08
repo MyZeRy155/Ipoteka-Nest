@@ -15,6 +15,9 @@ export class AuditLog {
   @Column('int', { nullable: true })
   userId: number | null;
 
+  @Column('boolean')
+  trusted: boolean;
+
   @Index()
   @Column('varchar', { length: 45 })
   ipAddress: string;

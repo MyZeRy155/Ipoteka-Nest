@@ -13,6 +13,7 @@ import { AuditMeta } from './audit-meta.interface';
 import { GetAuditLogsQueryDto } from './dto/get-audit-logs-query.dto';
 import { toAuditLogDto } from './dto/audit-log.dto';
 import { paginate } from '../common/paginate';
+import { WhitelistService } from '../whitelist/whitelist.service';
 
 @Injectable()
 export class AuditService {
@@ -22,6 +23,7 @@ export class AuditService {
     @InjectRepository(AuditLog)
     private readonly auditRepo: Repository<AuditLog>,
     private readonly geoService: GeoService,
+    private readonly whitelistService: WhitelistService,
   ) {}
 
   record(meta: AuditMeta): void {
@@ -32,9 +34,11 @@ export class AuditService {
 
   private async enrichAndSave(meta: AuditMeta): Promise<void> {
     const geo = await this.geoService.getGeoLocation(meta.ip);
+    const trusted = await this.whitelistService.isTrusted(meta.ip);
     await this.auditRepo.save(
       this.auditRepo.create({
         userId: meta.userId,
+        trusted: trusted,
         ipAddress: meta.ip,
         countryCode: geo.countryCode,
         method: meta.method,

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,6 +13,9 @@ import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import { UserStatus } from './entities/status.enum';
 import { paginate } from '../common/paginate';
+import { Role, ROLE_RANK } from './entities/role.enum';
+
+export type Requester = { sub: number; role: Role };
 
 @Injectable()
 export class UsersService {
@@ -16,6 +23,21 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly configService: ConfigService,
   ) {}
+
+  private assertCanManage(actor: Requester, target: User): void {
+    const actorRank = ROLE_RANK[actor.role];
+    const targetRank = ROLE_RANK[target.role];
+
+    if (
+      actorRank === undefined ||
+      targetRank === undefined ||
+      actorRank <= targetRank
+    ) {
+      throw new ForbiddenException(
+        'Недостаточно прав для действий над этим пользователем',
+      );
+    }
+  }
 
   async create(username: string, hashedPassword: string) {
     return this.userRepository.save({ username, hashedPassword });
@@ -39,8 +61,10 @@ export class UsersService {
 
   async resetPassword(
     id: number,
+    actor: Requester,
   ): Promise<{ username: string; temporaryPassword: string }> {
     const user = await this.getById(id);
+    this.assertCanManage(actor, user);
 
     const temporaryPassword = crypto.randomBytes(9).toString('base64');
     const hashedPassword = await bcrypt.hash(
@@ -55,16 +79,18 @@ export class UsersService {
     return { username: user.username, temporaryPassword };
   }
 
-  async blockUser(id: number) {
-    await this.getById(id);
+  async blockUser(id: number, actor: Requester) {
+    const target = await this.getById(id);
+    this.assertCanManage(actor, target);
     await this.userRepository.update(id, {
       status: UserStatus.Blocked,
       hashedRefreshToken: null,
     });
   }
 
-  async unBlockUser(id: number) {
-    await this.getById(id);
+  async unBlockUser(id: number, actor: Requester) {
+    const target = await this.getById(id);
+    this.assertCanManage(actor, target);
     await this.userRepository.update(id, { status: UserStatus.Active });
   }
 
