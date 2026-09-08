@@ -6,9 +6,10 @@ import { AuditService } from './audit.service';
 import { AuditController } from './audit.controller';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuditInterceptor } from './audit.interceptor';
+import { WhitelistModule } from '../whitelist/whitelist.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AuditLog]), GeoModule],
+  imports: [TypeOrmModule.forFeature([AuditLog]), GeoModule, WhitelistModule],
   controllers: [AuditController],
   providers: [
     AuditService,

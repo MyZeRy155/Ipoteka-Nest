@@ -16,6 +16,14 @@ export class AuditLogDto {
   userId: number | null;
 
   @ApiProperty({
+    example: false,
+    description:
+      'Пришёл ли запрос с IP-адреса из белого списка. Пока список пуст, доверенных адресов нет и признак ' +
+      'у всех записей равен false',
+  })
+  trusted: boolean;
+
+  @ApiProperty({
     example: '203.0.113.7',
     description: 'IP-адрес клиента',
   })
@@ -57,6 +65,7 @@ export function toAuditLogDto(entity: AuditLog): AuditLogDto {
   return {
     id: entity.id,
     userId: entity.userId,
+    trusted: entity.trusted,
     ipAddress: entity.ipAddress,
     countryCode: entity.countryCode,
     method: entity.method,
