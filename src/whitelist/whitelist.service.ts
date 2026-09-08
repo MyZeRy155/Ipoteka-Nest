@@ -39,9 +39,8 @@ export class WhitelistService {
     await this.cacheManager.del(this.CACHE_KEY);
   }
 
-  async isAllowed(ip: string): Promise<boolean> {
+  async isTrusted(ip: string): Promise<boolean> {
     const set = await this.loadSet();
-    if (set.length === 0) return true;
     return set.includes(ip);
   }
 

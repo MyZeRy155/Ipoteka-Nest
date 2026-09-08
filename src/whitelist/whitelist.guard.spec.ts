@@ -3,11 +3,11 @@ import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 
 describe('WhitelistGuard', () => {
   let guard: WhiteListGuard;
-  let whitelistService: { isAllowed: jest.Mock };
+  let whitelistService: { isTrusted: jest.Mock };
   let reflector: { getAllAndOverride: jest.Mock };
 
   beforeEach(() => {
-    whitelistService = { isAllowed: jest.fn() };
+    whitelistService = { isTrusted: jest.fn() };
     reflector = { getAllAndOverride: jest.fn() };
     guard = new WhiteListGuard(whitelistService as any, reflector as any);
   });
@@ -26,32 +26,32 @@ describe('WhitelistGuard', () => {
     reflector.getAllAndOverride.mockReturnValue(true);
 
     await expect(guard.canActivate(ctx('1.2.3.4'))).resolves.toBe(true);
-    expect(whitelistService.isAllowed).not.toHaveBeenCalled();
+    expect(whitelistService.isTrusted).not.toHaveBeenCalled();
   });
 
   it('пропускает, когда IP в белом списке', async () => {
     reflector.getAllAndOverride.mockReturnValue(undefined);
 
-    whitelistService.isAllowed.mockResolvedValue(true);
+    whitelistService.isTrusted.mockResolvedValue(true);
     await expect(guard.canActivate(ctx('1.2.3.4'))).resolves.toBe(true);
-    expect(whitelistService.isAllowed).toHaveBeenCalledWith('1.2.3.4');
+    expect(whitelistService.isTrusted).toHaveBeenCalledWith('1.2.3.4');
   });
 
   it('бросает ForbiddenException, если IP не в списке', async () => {
     reflector.getAllAndOverride.mockReturnValue(undefined);
-    whitelistService.isAllowed.mockResolvedValue(false);
+    whitelistService.isTrusted.mockResolvedValue(false);
 
     await expect(guard.canActivate(ctx('9.9.9.9'))).rejects.toThrow(
       ForbiddenException,
     );
   });
 
-  it('передаёт в isAllowed развёрнутый IPv4 из ::ffff:', async () => {
+  it('передаёт в isTrusted развёрнутый IPv4 из ::ffff:', async () => {
     reflector.getAllAndOverride.mockReturnValue(undefined);
-    whitelistService.isAllowed.mockResolvedValue(true);
+    whitelistService.isTrusted.mockResolvedValue(true);
 
     await guard.canActivate(ctx('::ffff:1.2.3.4'));
 
-    expect(whitelistService.isAllowed).toHaveBeenCalledWith('1.2.3.4');
+    expect(whitelistService.isTrusted).toHaveBeenCalledWith('1.2.3.4');
   });
 });
